@@ -127,21 +127,28 @@ def main():
         if st.sidebar.button("Convert PDF"):
             with st.spinner('Processing...'):
                 client = OpenAI(api_key=api_key) if approach == "Approach 1 with AI" else None
-                pdf_content = load_content(uploaded_file, approach)
-                if pdf_content.startswith("An error occurred"):
-                    st.error(pdf_content)
+                content = load_content(uploaded_file, approach)
+                if content.startswith("An error occurred"):
+                    st.error(content)
                 else:
-                    html_content = PDFTOHTML(pdf_content, client) if approach == "Approach 1 with AI" else pdf_content
+                    if approach == "Approach 1 with AI":
+                        html_content = PDFTOHTML(content, client)
+                        text_content = content  # If you need to show the original text content.
+                    else:
+                        html_content = content  # For Approach 2, content is already HTML.
+                        text_content = "Text extraction not available in Approach 2."
 
                     # Display content
                     st.subheader("PDF Content:")
-                    st.text_area("Text Content", pdf_content, height=300)
+                    if approach == "Approach 1 with AI":
+                        st.text_area("Text Content", text_content, height=300)
                     st.subheader("HTML Content Preview:")
                     st.markdown(html_content, unsafe_allow_html=True)
 
-                    # Persistent download buttons
-                    st.download_button("Download Text", pdf_content, file_name="document.txt", mime="text/plain")
-                    st.download_button("Download HTML", html_content, file_name="document.html", mime="text/html")
+            # Persistent download buttons
+            if approach == "Approach 1 with AI":
+                 st.sidebar.download_button("Download Text", text_content, file_name="document.txt", mime="text/plain")
+            st.sidebar.download_button("Download HTML", html_content, file_name="document.html", mime="text/html")
 
 if __name__ == "__main__":
     main()
