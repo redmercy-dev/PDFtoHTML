@@ -6,3 +6,4 @@ pytesseract
 openai
 langchain
 beautifulsoup4
+pdfminer.six
