@@ -1,0 +1,9 @@
+
+streamlit
+PyMuPDF
+Pillow
+pytesseract
+openai
+langchain
+beautifulsoup4
+tempfile
